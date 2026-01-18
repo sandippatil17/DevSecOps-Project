@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('GitHub config') {
+        stage('Checkout Code') {
             steps {
                 git url: 'https://github.com/sandippatil17/DevSecOps-Project.git', branch: 'main'
             }
@@ -13,18 +13,18 @@ pipeline {
                 sh 'docker build -t myapp .'
             }
         }
-	stage('Trivy Security Scan') {
-	    steps {
-        	sh '''
-        	trivy fs \
-          	--scanners vuln \
-          	--severity HIGH,CRITICAL \
-          	--exit-code 1 \
-          	.
-        	'''
-    		}
-	}
 
+        stage('Trivy Security Scan') {
+            steps {
+                sh '''
+                trivy fs \
+                  --scanners vuln \
+                  --severity HIGH,CRITICAL \
+                  --exit-code 1 \
+                  .
+                '''
+            }
+        }
 
         stage('Docker container run') {
             steps {
