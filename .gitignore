@@ -1,0 +1,8 @@
+# Trivy cache
+.cache/
+.trivy/
+
+# Common CI/CD caches
+node_modules/
+target/
+dist/
