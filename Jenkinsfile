@@ -13,6 +13,18 @@ pipeline {
                 sh 'docker build -t myapp .'
             }
         }
+	stage('Trivy Security Scan') {
+	    steps {
+        	sh '''
+        	trivy fs \
+          	--scanners vuln \
+          	--severity HIGH,CRITICAL \
+          	--exit-code 1 \
+          	.
+        	'''
+    		}
+	}
+
 
         stage('Docker container run') {
             steps {
