@@ -1,14 +1,11 @@
 pipeline {
     agent any
-
+    environment {
+        LANG = 'en_US.UTF-8'
+        LC_ALL = 'en_US.UTF-8'
+    }
     stages {
-        stage('Checkout Code') {
-            steps {
-                git url: 'https://github.com/sandippatil17/DevSecOps-Project.git', branch: 'main'
-            }
-        }
-
-        stage('Docker image build') {
+       stage('Docker image build') {
             steps {
                 sh 'docker build -t myapp .'
             }
