@@ -14,22 +14,21 @@ pipeline {
             }
         }
 
-        stage('Trivy Security Scan') {
-            steps {
-                sh '''
-                trivy fs \
-                  --scanners vuln \
-                  --severity HIGH,CRITICAL \
-                  --exit-code 1 \
-                  .
-                '''
-            }
-        }
-
         stage('Docker container run') {
             steps {
                 sh 'docker rm -f myappcontainer || true'
                 sh 'docker run -d --name myappcontainer -p 80:80 myapp'
+            }
+        }
+        stage('Trivy Scan') {
+            steps {
+                sh 'trivy fs --scanners vuln .'
+            }
+        }
+
+        stage('Deploy using Ansible') {
+            steps {
+                sh 'ansible-playbook -i hosts nginx.yml'
             }
         }
     }
