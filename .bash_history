@@ -133,3 +133,33 @@ ls
 git add .
 git commit -m "trivy.."
 git push -u origin main
+ls
+nano Jenkinsfile 
+git add .
+git commit -m "ansible"
+git push -u origin main
+ls
+nano Jenkinsfile 
+git add .
+git commit -m "ansible added"
+git push -u origin main
+nano Jenkinsfile 
+git add .
+git commit -m "ansible added"
+git push -u origin main
+cd ~/ansible-nginx   # or your project repo
+ls
+cd ~/ansible-nginx
+cd ~
+ls
+nano hosts
+nano nginx.yml
+mkdir site
+cd site
+nano index.html
+cd
+git add .
+git commit -m "ansible added"
+git push -u origin main
+ssh star@192.168.56.138
+exit
