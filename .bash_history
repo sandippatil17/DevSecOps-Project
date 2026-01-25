@@ -163,3 +163,8 @@ git commit -m "ansible added"
 git push -u origin main
 ssh star@192.168.56.138
 exit
+clear
+ls
+git add .
+git commit -m "ansible clear"
+git push -u origin main

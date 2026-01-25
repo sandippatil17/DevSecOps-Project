@@ -1,11 +1,11 @@
-- name: Deploy Nginx Static Website
+- name: Deploy Apache2 Static Website
   hosts: web
   become: yes
 
   tasks:
-    - name: Install nginx
+    - name: Install apache2
       apt:
-        name: nginx
+        name: apache2
         state: present
         update_cache: yes
 
@@ -17,8 +17,8 @@
         group: www-data
         mode: '0644'
 
-    - name: Start and enable nginx
+    - name: Start and enable apache2
       service:
-        name: nginx
+        name: apache2
         state: started
         enabled: yes
