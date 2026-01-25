@@ -5,6 +5,12 @@ pipeline {
         LC_ALL = 'C.UTF-8'
     }
     stages {
+        stage('GitHub config') {
+            steps {
+                git url:'https://github.com/sandippatil17/DevSecOps-Project.git', branch:'main'
+            }
+        }
+
        stage('Docker image build') {
             steps {
                 sh 'docker build -t myapp .'
