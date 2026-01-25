@@ -23,11 +23,17 @@ pipeline {
                 sh 'docker run -d --name myappcontainer -p 80:80 myapp'
             }
         }
-        stage('Trivy Scan') {
+        stage('Trivy Security Scan') {
             steps {
-                sh 'trivy fs --scanners vuln .'
+            sh '''
+            trivy image myapp
+            trivy fs --scanners vuln .
+            trivy fs --scanners secret .
+            trivy config .
+            '''
             }
         }
+
 
         stage('Deploy using Ansible') {
             steps {
