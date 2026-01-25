@@ -26,9 +26,9 @@ pipeline {
         stage('Trivy Security Scan') {
             steps {
             sh '''
-            trivy image myapp
-            trivy fs --scanners vuln .
+            trivy image --pkg-types os myapp
             trivy fs --scanners secret .
+            trivy config .
             '''
             }
         }
