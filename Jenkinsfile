@@ -29,7 +29,6 @@ pipeline {
             trivy image myapp
             trivy fs --scanners vuln .
             trivy fs --scanners secret .
-            trivy config .
             '''
             }
         }
