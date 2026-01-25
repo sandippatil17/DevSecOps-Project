@@ -1,4 +1,4 @@
-- name: Deploy Apache2 Static Website
+- name: Deploy Apache2 Static Website on Port 8081
   hosts: web
   become: yes
 
@@ -9,6 +9,18 @@
         state: present
         update_cache: yes
 
+    - name: Change Apache listen port to 8081
+      lineinfile:
+        path: /etc/apache2/ports.conf
+        regexp: '^Listen'
+        line: 'Listen 8081'
+
+    - name: Update default virtual host to 8081
+      replace:
+        path: /etc/apache2/sites-available/000-default.conf
+        regexp: '<VirtualHost \*:80>'
+        replace: '<VirtualHost *:8081>'
+
     - name: Copy website files
       copy:
         src: site/
@@ -17,8 +29,8 @@
         group: www-data
         mode: '0644'
 
-    - name: Start and enable apache2
+    - name: Restart apache2
       service:
         name: apache2
-        state: started
+        state: restarted
         enabled: yes
