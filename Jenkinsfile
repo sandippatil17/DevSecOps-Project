@@ -36,7 +36,7 @@ pipeline {
 
         stage('Deploy using Ansible') {
             steps {
-                sh 'ansible-playbook -i hosts nginx.yml'
+                sh 'ansible-playbook -i hosts apache.yml'
             }
         }
     }
