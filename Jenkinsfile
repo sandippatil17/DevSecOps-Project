@@ -3,6 +3,7 @@ pipeline {
     environment {
         LANG = 'C.UTF-8'
         LC_ALL = 'C.UTF-8'
+        SNYK_TOKEN = credentials('snyk-token')
     }
     stages {
         stage('GitHub config') {
@@ -11,32 +12,53 @@ pipeline {
             }
         }
 
-       stage('Docker image build') {
+        stage('Snyk Code Scan') {
             steps {
-                sh 'docker build -t myapp .'
+                script {
+                    echo "--- Step 1: Scanning Application Code ---"
+                    sh "snyk auth ${SNYK_TOKEN}"
+                    sh 'snyk test --severity-threshold=high || true'
+                }
             }
         }
 
-        stage('Docker container run') {
+        stage('Docker Image Build') {
             steps {
-                sh 'docker rm -f myappcontainer || true'
-                sh 'docker run -d --name myappcontainer -p 80:80 myapp'
+                echo "Building Docker Image..."
+                sh 'docker build -t myapp:latest .'
             }
         }
+
         stage('Trivy Security Scan') {
             steps {
-            sh '''
-            trivy image --pkg-types os myapp
-            trivy fs --scanners secret .
-            trivy config .
-            '''
+                script {
+                    echo "--- Phase 1: Filesystem Scan ---"
+                    sh 'export TMPDIR=$WORKSPACE && trivy fs --severity CRITICAL --exit-code 1 .'
+                    
+                    echo "--- Phase 2: Image Scan ---"
+                    sh 'export TMPDIR=$WORKSPACE && trivy image --severity CRITICAL --no-progress --vuln-type os --exit-code 1 myapp:latest'
+                }
             }
         }
 
-
-        stage('Deploy using Ansible') {
+        stage('Deploy Static Web-Page') {
             steps {
-                sh 'ansible-playbook -i hosts apache.yml'
+                echo "Deploying Container to Port 80..."
+                sh 'docker rm -f myappcontainer || true'
+                sh 'docker run -d --name myappcontainer -p 80:80 myapp:latest'
+            }
+        }
+
+        stage('Ansible Deploy Apache') {
+            steps {
+                echo "Configuring Apache on Port 8081..."
+                ansiblePlaybook(
+                    playbook: 'apache.yml',
+                    inventory: 'inventory.ini',
+                    credentialsId: 'node-ssh-key',
+                    installation: 'Ansible',
+                    colorized: true
+                )
             }
         }
     }
